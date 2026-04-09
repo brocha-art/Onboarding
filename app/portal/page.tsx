@@ -83,7 +83,10 @@ export default function PortalPage() {
   }, [])
 
   function scrollTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    // Scroll both window and body to cover all browser/env differences
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }) } catch (_) {}
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
   }
 
   function goTo(step: PortalState['step']) {

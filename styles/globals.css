@@ -175,7 +175,7 @@ body::before {
    ============================================================ */
 .portal-main {
   flex: 1;
-  padding: 52px 48px;
+  padding: 52px 48px 96px;
   max-width: 960px;
   width: 100%;
   margin: 0 auto;
@@ -1261,7 +1261,7 @@ body::before {
    ============================================================ */
 @media (max-width: 640px) {
   .portal-nav { padding: 16px 20px; }
-  .portal-main { padding: 28px 20px; }
+  .portal-main { padding: 28px 20px 96px; }
   .selector-grid, .field-row, .field-row-3 { grid-template-columns: 1fr; }
   .progress-bar-wrap { padding: 0 20px; }
   .ps-label { display: none; }
