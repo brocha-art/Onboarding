@@ -26,25 +26,56 @@ export default function PortalPage() {
   const [userEmail, setUserEmail] = useState<string>('')
   const router = useRouter()
 
-  // Load authenticated user and pre-fill name from email
+  // Load authenticated user + existing artist data from Supabase
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
+
+    async function loadUserData() {
+      const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/login'); return }
 
       setUserEmail(user.email ?? '')
 
-      // Pre-fill artist name from user metadata or email prefix
+      // Fallback name from metadata / email prefix
       const metaName = user.user_metadata?.full_name ?? user.user_metadata?.name ?? ''
       const emailPrefix = (user.email ?? '').split('@')[0]
         .replace(/[._-]/g, ' ')
         .replace(/\b\w/g, (c) => c.toUpperCase())
+      const fallbackName = metaName || emailPrefix
 
-      setState((prev) => ({
-        ...prev,
-        artistName: metaName || emailPrefix || prev.artistName,
-      }))
-    })
+      // Try to load existing artist row
+      const { data: artist } = await supabase
+        .from('artists')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+      if (artist) {
+        // Artist already has saved data — restore it into state
+        const savedSections = Array.isArray(artist.sections) ? artist.sections as string[] : []
+        setState((prev) => ({
+          ...prev,
+          artistName:      artist.name        || fallbackName || prev.artistName,
+          country:         artist.country     || prev.country,
+          bio:             artist.bio         || prev.bio,
+          instagram:       artist.instagram   || prev.instagram,
+          website:         artist.website     || prev.website,
+          profilePhotoUrl: artist.profile_photo_url || prev.profilePhotoUrl,
+          sections: {
+            tienda:   savedSections.includes('tienda'),
+            estudios: savedSections.includes('estudios'),
+          },
+        }))
+      } else {
+        // No artist row yet — just pre-fill name
+        setState((prev) => ({
+          ...prev,
+          artistName: fallbackName || prev.artistName,
+        }))
+      }
+    }
+
+    loadUserData()
   }, [router])
 
   const update = useCallback((patch: Partial<PortalState>) => {

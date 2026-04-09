@@ -115,14 +115,24 @@ export async function submitPortal(
     return { success: false, error: artistError.message }
   }
 
-  // 2. Insert submission record
-  await supabase.from('submissions').insert({
-    artist_id: artistId,
-    status: 'pending',
-  })
+  // 2. Insert submission record (only if not already submitted)
+  const { data: existingSub } = await supabase
+    .from('submissions')
+    .select('id')
+    .eq('artist_id', artistId)
+    .maybeSingle()
 
-  // 3. Insert products
+  if (!existingSub) {
+    await supabase.from('submissions').insert({
+      artist_id: artistId,
+      status: 'pending',
+    })
+  }
+
+  // 3. Upsert products — delete old ones first, then re-insert
   if (state.sections.tienda && state.products.length > 0) {
+    await supabase.from('products').delete().eq('artist_id', artistId)
+
     const productRows = state.products.map((p: Product, i: number) => ({
       artist_id: artistId,
       name: p.title,
@@ -143,9 +153,11 @@ export async function submitPortal(
     if (prodError) console.error('Products insert error:', prodError)
   }
 
-  // 4. Insert studio + modules + sessions + resources
+  // 4. Upsert studio — delete old one first, then re-insert
   if (state.sections.estudios) {
     const s: Studio = state.studio
+
+    await supabase.from('studios').delete().eq('artist_id', artistId)
 
     const { data: studioRow, error: studioError } = await supabase
       .from('studios')
