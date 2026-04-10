@@ -38,7 +38,7 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Protected routes — redirect to /login if not authenticated
-  const protectedPaths = ['/portal']
+  const protectedPaths = ['/portal', '/dashboard', '/vitrina', '/admin']
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p))
 
   if (isProtected && !user) {
@@ -48,11 +48,18 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Already logged-in users trying to access /login → send to /portal
+  // Already logged-in users trying to access /login → send to /dashboard
   if (pathname === '/login' && user) {
-    const portalUrl = request.nextUrl.clone()
-    portalUrl.pathname = '/portal'
-    return NextResponse.redirect(portalUrl)
+    const dashUrl = request.nextUrl.clone()
+    dashUrl.pathname = '/dashboard'
+    return NextResponse.redirect(dashUrl)
+  }
+
+  // Root / → redirect to /dashboard if logged in, else /login
+  if (pathname === '/') {
+    const dest = request.nextUrl.clone()
+    dest.pathname = user ? '/dashboard' : '/login'
+    return NextResponse.redirect(dest)
   }
 
   return supabaseResponse

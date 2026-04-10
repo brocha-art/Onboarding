@@ -1260,9 +1260,171 @@ body::before {
 }
 
 /* ============================================================
+   DASHBOARD
+   ============================================================ */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 860px;
+}
+
+.dash-card {
+  background: var(--deep2);
+  border: 1.5px solid var(--pb);
+  border-radius: 20px;
+  padding: 36px 28px;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  font-family: 'Montserrat', sans-serif;
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.dash-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(116,84,232,0.08), transparent);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.dash-card:hover {
+  border-color: var(--purple);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(116, 84, 232, 0.2);
+}
+
+.dash-card:hover::before { opacity: 1; }
+
+.dash-card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(116, 84, 232, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--purple);
+  transition: all 0.25s;
+}
+
+.dash-card-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.dash-card:hover .dash-card-icon {
+  background: var(--purple);
+  color: var(--white);
+}
+
+.dash-card-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.3px;
+}
+
+.dash-card-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   STATUS BADGES
+   ============================================================ */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.status-pending   { background: rgba(255,180,0,0.12);  color: #ffb400; border: 1px solid rgba(255,180,0,0.3); }
+.status-approved  { background: rgba(80,200,120,0.12); color: #50c878; border: 1px solid rgba(80,200,120,0.3); }
+.status-published { background: rgba(116,84,232,0.15); color: var(--purple); border: 1px solid var(--pb); }
+.status-rejected  { background: rgba(255,80,80,0.1);   color: #ff6b6b; border: 1px solid rgba(255,80,80,0.3); }
+
+/* ============================================================
+   VITRINA & ADMIN CARDS
+   ============================================================ */
+.vitrina-card {
+  background: var(--deep2);
+  border: 0.5px solid var(--pb);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.vitrina-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.vitrina-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+
+.vitrina-card-meta {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+
+.vitrina-card-body {
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.vitrina-card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--pb);
+}
+
+.admin-artist-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  background: rgba(255,255,255,0.05);
+  border: 0.5px solid var(--pb);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 640px) {
+  .dashboard-cards { grid-template-columns: 1fr; gap: 14px; }
+  .dash-card { padding: 24px 20px; flex-direction: row; text-align: left; gap: 16px; }
+  .dash-card-desc { display: none; }
   .portal-nav { padding: 16px 20px; }
   .portal-main { padding: 28px 20px 96px; }
   .selector-grid, .field-row, .field-row-3 { grid-template-columns: 1fr; }

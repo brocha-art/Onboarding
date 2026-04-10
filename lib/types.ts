@@ -99,13 +99,13 @@ export const initialStudio: Studio = {
 }
 
 export const initialState: PortalState = {
-  step: 1,
-  artistName: 'Sara Alarcón',
-  country: 'Colombia',
-  bio: 'Artista visual colombiana. Exploro la identidad latinoamericana a través de la pintura y el arte textil.',
+  step: 2,
+  artistName: '',
+  country: '',
+  bio: '',
   profilePhotoFile: null,
   profilePhotoUrl: '',
-  instagram: '@sara.alarcon.arte',
+  instagram: '',
   website: '',
   sections: { tienda: false, estudios: false },
   products: [],

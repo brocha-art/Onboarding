@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import type { PortalState } from '@/lib/types'
 import { initialState, makeProduct, makeModule } from '@/lib/types'
 import { createClient } from '@/lib/supabase-client'
@@ -13,19 +13,19 @@ import {
   makeEmptyResolvedUrls,
 } from '@/lib/supabase'
 import Stepper from '@/components/portal/Stepper'
-import Step1Profile from '@/components/portal/Step1Profile'
 import Step2Section from '@/components/portal/Step2Section'
 import Step3Tienda from '@/components/portal/Step3Tienda'
 import Step3Estudios from '@/components/portal/Step3Estudios'
 import Step4Review from '@/components/portal/Step4Review'
 
 export default function PortalPage() {
-  const [state, setState] = useState<PortalState>(initialState)
+  const [state, setState] = useState<PortalState>({ ...initialState, step: 2 })
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [userEmail, setUserEmail] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   // Load authenticated user + existing artist data from Supabase
   useEffect(() => {
@@ -51,29 +51,22 @@ export default function PortalPage() {
         .eq('id', user.id)
         .single()
 
-      if (artist) {
-        // Artist already has saved data — restore it into state
-        const savedSections = Array.isArray(artist.sections) ? artist.sections as string[] : []
-        setState((prev) => ({
-          ...prev,
-          artistName:      artist.name        || fallbackName || prev.artistName,
-          country:         artist.country     || prev.country,
-          bio:             artist.bio         || prev.bio,
-          instagram:       artist.instagram   || prev.instagram,
-          website:         artist.website     || prev.website,
-          profilePhotoUrl: artist.profile_photo_url || prev.profilePhotoUrl,
-          sections: {
-            tienda:   savedSections.includes('tienda'),
-            estudios: savedSections.includes('estudios'),
-          },
-        }))
-      } else {
-        // No artist row yet — just pre-fill name
-        setState((prev) => ({
-          ...prev,
-          artistName: fallbackName || prev.artistName,
-        }))
-      }
+      // Always start at step 2 (Step 1 / profile is removed)
+      const savedSections = Array.isArray(artist?.sections) ? artist.sections as string[] : []
+      setState((prev) => ({
+        ...prev,
+        step: 2,
+        artistName:      artist?.name              || fallbackName || prev.artistName,
+        country:         artist?.country           || prev.country,
+        bio:             artist?.bio               || prev.bio,
+        instagram:       artist?.instagram         || prev.instagram,
+        website:         artist?.website           || prev.website,
+        profilePhotoUrl: artist?.profile_photo_url || prev.profilePhotoUrl,
+        sections: {
+          tienda:   savedSections.includes('tienda'),
+          estudios: savedSections.includes('estudios'),
+        },
+      }))
 
       setLoading(false)
     }
@@ -286,7 +279,14 @@ export default function PortalPage() {
           <span className="nav-name">{state.artistName || userEmail || 'Artista'}</span>
           <button
             className="btn btn-ghost"
-            style={{ padding: '6px 14px', fontSize: 12, marginLeft: 8 }}
+            style={{ padding: '6px 14px', fontSize: 12, marginLeft: 4 }}
+            onClick={() => router.push('/dashboard')}
+          >
+            ← Inicio
+          </button>
+          <button
+            className="btn btn-ghost"
+            style={{ padding: '6px 14px', fontSize: 12, marginLeft: 4 }}
             onClick={async () => {
               const supabase = createClient()
               await supabase.auth.signOut()
@@ -319,23 +319,18 @@ export default function PortalPage() {
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
               <button
                 className="btn btn-ghost"
-                onClick={() => { setState(initialState); scrollTop() }}
+                onClick={() => router.push('/vitrina')}
               >
-                Subir más material
+                Ver mi vitrina
               </button>
               <button
                 className="btn btn-yellow"
-                onClick={() => alert('¡Próximamente disponible!')}
+                onClick={() => router.push('/dashboard')}
               >
-                Ver mi perfil →
+                Ir al inicio →
               </button>
             </div>
           </div>
-        )}
-
-        {/* ── STEP 1: PERFIL ── */}
-        {state.step === 1 && (
-          <Step1Profile state={state} update={update} onNext={() => goTo(2)} />
         )}
 
         {/* ── STEP 2: SECCIÓN ── */}
@@ -344,7 +339,7 @@ export default function PortalPage() {
             state={state}
             update={update}
             onNext={() => goToContent()}
-            onBack={() => goTo(1)}
+            onBack={() => router.push('/dashboard')}
           />
         )}
 

@@ -38,23 +38,18 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 })
 
-// ── LeadGods /es/api/client types ────────────────────────────────────
+// ── LeadGods /es/api-client/client types ─────────────────────────────
 
 interface LeadGodsClient {
+  id: string
   userId: string
-  partnerusId: string
-  displayName: string
   name: string
-  lastName: string | null
-  rolId: string
-  rol: string
+  lastname: string | null
   email: string
-  state: string
-  nameState: string
-  country: string | null
-  code: string | null
-  phone: string | null
-  city: string | null
+  role: string
+  roleId: string
+  createdAt: string | null
+  lastAccess: string | null
 }
 
 interface LeadGodsResponse {
@@ -72,10 +67,10 @@ async function fetchAllUsers(): Promise<LeadGodsClient[]> {
   let total = Infinity
 
   console.log(`\n📥 Fetching clients from LeadGods...`)
-  console.log(`   URL: ${LEADGODS_API_URL}/es/api/client`)
+  console.log(`   URL: ${LEADGODS_API_URL}/es/api-client/client`)
 
   while (allUsers.length < total) {
-    const url = `${LEADGODS_API_URL}/es/api/client?limit=${BATCH_SIZE}&page=${page}`
+    const url = `${LEADGODS_API_URL}/es/api-client/client?limit=${BATCH_SIZE}&page=${page}`
 
     const res = await fetch(url, {
       headers: { Authorization: LEADGODS_API_TOKEN },
@@ -144,7 +139,7 @@ async function loadExistingEmails() {
 }
 
 async function createSupabaseUser(user: LeadGodsClient): Promise<MigrationResult> {
-  const fullName = [user.name, user.lastName]
+  const fullName = [user.name, user.lastname]
     .filter(Boolean)
     .join(' ')
     .trim()
@@ -153,11 +148,6 @@ async function createSupabaseUser(user: LeadGodsClient): Promise<MigrationResult
 
   if (!email || !email.includes('@')) {
     return { email: email ?? '(empty)', status: 'skipped', error: 'Invalid email' }
-  }
-
-  // Skip inactive users
-  if (user.state !== '1') {
-    return { email, status: 'skipped', error: `Inactive (state=${user.state})` }
   }
 
   // Check against cached set
@@ -171,11 +161,9 @@ async function createSupabaseUser(user: LeadGodsClient): Promise<MigrationResult
     email_confirm: true,
     user_metadata: {
       full_name: fullName,
-      leadgods_partner_id: user.partnerusId,
+      leadgods_id: user.id,
       leadgods_user_id: user.userId,
-      role: user.rolId,
-      country: user.country ?? '',
-      city: user.city ?? '',
+      role: user.roleId,
     },
   })
 
@@ -194,7 +182,7 @@ async function createSupabaseUser(user: LeadGodsClient): Promise<MigrationResult
     await supabase.from('artists').upsert({
       id: data.user.id,
       name: fullName || email.split('@')[0],
-      country: user.code ?? '',
+      country: '',
       bio: '',
       instagram: '',
       website: '',

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tu código Brocha</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── Reset ── */
+    body, table, td { margin: 0; padding: 0; }
+
+    /* ── Mobile ── */
+    @media only screen and (max-width: 600px) {
+      .wrapper-td   { padding: 16px 12px !important; }
+      .card-body    { padding: 28px 20px 24px !important; }
+      .card-footer  { padding: 14px 20px !important; }
+      .otp-code     { font-size: 36px !important; letter-spacing: 8px !important; }
+      .otp-box      { padding: 20px 16px !important; }
+      .heading      { font-size: 19px !important; }
+      .logo-text    { font-size: 26px !important; }
+      .logo-wrap    { margin-bottom: 24px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background-color:#0e0728;font-family:'Montserrat',Arial,sans-serif;">
+
+  <!-- Wrapper -->
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0e0728;">
+    <tr>
+      <td align="center" class="wrapper-td" style="padding:40px 16px;">
+
+        <!-- Card -->
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:linear-gradient(135deg,#1a0d3d,#0e0728);border:1px solid rgba(116,84,232,0.35);border-radius:20px;overflow:hidden;">
+
+          <!-- Top accent bar -->
+          <tr>
+            <td style="background:linear-gradient(90deg,#7454e8,#fff56e);height:4px;font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td class="card-body" style="padding:40px 36px 36px;">
+
+              <!-- Logo -->
+              <div class="logo-wrap" style="text-align:center;margin-bottom:28px;">
+                <span class="logo-text" style="font-size:30px;font-weight:900;color:#fff56e;letter-spacing:-1px;">brocha</span><span class="logo-text" style="font-size:30px;font-weight:900;color:#7454e8;">.</span>
+              </div>
+
+              <!-- Heading -->
+              <h1 class="heading" style="margin:0 0 10px;font-size:21px;font-weight:800;color:#ffffff;text-align:center;letter-spacing:-0.3px;">
+                Tu código de acceso
+              </h1>
+              <p style="margin:0 0 28px;font-size:13px;color:rgba(255,255,255,0.55);text-align:center;line-height:1.6;">
+                Usa este código para iniciar sesión en Brocha.<br/>
+                Válido por <strong style="color:rgba(255,255,255,0.8);">10 minutos</strong>.
+              </p>
+
+              <!-- OTP Code -->
+              <div class="otp-box" style="background:rgba(116,84,232,0.15);border:2px solid rgba(116,84,232,0.45);border-radius:14px;padding:24px 20px;text-align:center;margin-bottom:28px;">
+                <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">
+                  Código de verificación
+                </div>
+                <div class="otp-code" style="font-size:44px;font-weight:900;color:#fff56e;letter-spacing:12px;font-variant-numeric:tabular-nums;">
+                  {{ .Token }}
+                </div>
+              </div>
+
+              <!-- Divider -->
+              <div style="border-top:1px solid rgba(116,84,232,0.2);margin-bottom:20px;"></div>
+
+              <!-- Security note -->
+              <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.3);text-align:center;line-height:1.7;">
+                Si no solicitaste este código, ignora este correo.<br/>
+                Nadie del equipo Brocha te pedirá este código.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td class="card-footer" style="background:rgba(0,0,0,0.2);padding:16px 36px;text-align:center;border-top:1px solid rgba(116,84,232,0.15);">
+              <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.22);">
+                © 2025 Brocha · Plataforma para artistas latinoamericanos
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

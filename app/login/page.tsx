@@ -106,7 +106,7 @@ export default function LoginPage() {
       return
     }
 
-    router.push('/portal')
+    router.push('/dashboard')
   }
 
   async function handleResend() {
