@@ -101,7 +101,7 @@ function VerifyForm() {
     <div className="auth-screen">
       <div className="auth-card">
         <div className="auth-logo">
-          brocha<span>.</span>
+          <img src="/brocha-logo.svg" alt="Brocha" style={{ height: 52, width: 'auto' }} />
         </div>
 
         <h1 className="auth-title">Ingresa tu código</h1>

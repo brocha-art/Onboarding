@@ -62,14 +62,14 @@ body::before {
 }
 
 .logo {
-  font-size: 26px;
-  font-weight: 900;
-  color: var(--yellow);
-  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
 }
 
-.logo span {
-  color: var(--purple);
+.logo img {
+  height: 36px;
+  width: auto;
+  display: block;
 }
 
 .nav-artist {
@@ -1144,15 +1144,15 @@ body::before {
 }
 
 .auth-logo {
-  font-size: 28px;
-  font-weight: 900;
-  color: var(--yellow);
   margin-bottom: 32px;
-  letter-spacing: -0.5px;
+  display: flex;
+  justify-content: center;
 }
 
-.auth-logo span {
-  color: var(--purple);
+.auth-logo img {
+  height: 64px;
+  width: auto;
+  display: block;
 }
 
 .auth-title {

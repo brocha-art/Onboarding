@@ -131,7 +131,9 @@ export default function LoginPage() {
     <div className="auth-screen">
       <div className="auth-card">
 
-        <div className="auth-logo">brocha<span>.</span></div>
+        <div className="auth-logo">
+          <img src="/brocha-logo.svg" alt="Brocha" style={{ height: 52, width: 'auto' }} />
+        </div>
 
         {step === 'email' ? (
           <>

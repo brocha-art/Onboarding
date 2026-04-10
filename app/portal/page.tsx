@@ -273,7 +273,9 @@ export default function PortalPage() {
     <>
       {/* Sticky Nav */}
       <nav className="portal-nav">
-        <div className="logo">brocha<span>.</span></div>
+        <div className="logo">
+          <img src="/brocha-logo.svg" alt="Brocha" style={{ height: 36, width: 'auto' }} />
+        </div>
         <div className="nav-artist">
           <div className="nav-avatar">
             {state.profilePhotoUrl
