@@ -24,6 +24,7 @@ export default function PortalPage() {
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [userEmail, setUserEmail] = useState<string>('')
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   // Load authenticated user + existing artist data from Supabase
@@ -73,6 +74,8 @@ export default function PortalPage() {
           artistName: fallbackName || prev.artistName,
         }))
       }
+
+      setLoading(false)
     }
 
     loadUserData()
@@ -242,6 +245,29 @@ export default function PortalPage() {
   // ── Render ─────────────────────────────────────────────────────
 
   const currentStep = state.step <= 4 ? state.step : 4
+
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        gap: 16,
+      }}>
+        <div style={{
+          width: 36,
+          height: 36,
+          border: '3px solid rgba(115,68,224,0.25)',
+          borderTop: '3px solid #7344E0',
+          borderRadius: '50%',
+          animation: 'spin 0.8s linear infinite',
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    )
+  }
 
   return (
     <>
