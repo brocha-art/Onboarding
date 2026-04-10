@@ -137,7 +137,7 @@ export default function LoginPage() {
 
         {step === 'email' ? (
           <>
-            <h1 className="auth-title">Bienvenida de nuevo</h1>
+            <h1 className="auth-title">Bienvenido a Brocha</h1>
             <p className="auth-sub">
               Ingresa tu correo y te enviaremos un código de acceso.
             </p>
