@@ -1201,10 +1201,13 @@ body::before {
   gap: 10px;
   justify-content: center;
   margin: 24px 0 8px;
+  width: 100%;
 }
 
 .otp-digit {
-  width: 52px;
+  flex: 1;
+  min-width: 0;
+  max-width: 52px;
   height: 60px;
   border-radius: 12px;
   border: 2px solid var(--pb);
@@ -1266,6 +1269,20 @@ body::before {
   .progress-bar-wrap { padding: 0 20px; }
   .ps-label { display: none; }
   .countries-grid { grid-template-columns: 1fr 1fr; }
-  .auth-card { padding: 36px 24px; }
-  .otp-digit { width: 44px; height: 52px; font-size: 20px; }
+
+  /* Auth card */
+  .auth-screen { padding: 20px 16px; align-items: flex-start; padding-top: 40px; }
+  .auth-card { padding: 36px 20px; border-radius: 20px; }
+  .auth-title { font-size: 20px; }
+  .auth-sub { font-size: 13px; margin-bottom: 22px; }
+
+  /* OTP */
+  .otp-inputs { gap: 8px; }
+  .otp-digit { height: 54px; font-size: 22px; border-radius: 10px; }
+}
+
+@media (max-width: 380px) {
+  .auth-card { padding: 28px 16px; }
+  .otp-inputs { gap: 6px; }
+  .otp-digit { height: 48px; font-size: 18px; }
 }
