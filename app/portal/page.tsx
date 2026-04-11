@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import type { PortalState } from '@/lib/types'
 import { initialState, makeProduct, makeModule } from '@/lib/types'
 import { createClient } from '@/lib/supabase-client'
@@ -25,7 +25,7 @@ export default function PortalPage() {
   const [userEmail, setUserEmail] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const searchParams = useSearchParams()
+
 
   // Load authenticated user + existing artist data from Supabase
   useEffect(() => {

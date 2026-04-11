@@ -85,30 +85,26 @@ export default function AdminPage() {
 
       // For each submission load product/studio counts
       const rows: AdminItem[] = await Promise.all(
-        (submissions ?? []).map(async (sub: {
-          id: string;
-          artist_id: string;
-          status: string;
-          created_at: string;
-          rejection_reason: string | null;
-          artists: { name: string } | null;
-        }) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (submissions ?? []).map(async (sub: any) => {
           const [{ count: prodCount }, { count: studioCount }] = await Promise.all([
             supabase.from('products').select('id', { count: 'exact', head: true }).eq('artist_id', sub.artist_id),
             supabase.from('studios').select('id', { count: 'exact', head: true }).eq('artist_id', sub.artist_id),
           ])
 
-          // Get artist email from auth
+          // Get artist name from artists table
           const { data: authUser } = await supabase
             .from('artists')
             .select('name')
             .eq('id', sub.artist_id)
             .maybeSingle()
 
+          const artistsJoin = Array.isArray(sub.artists) ? sub.artists[0] : sub.artists
+
           return {
             submissionId: sub.id,
             artistId: sub.artist_id,
-            artistName: authUser?.name || sub.artists?.name || '(Sin nombre)',
+            artistName: authUser?.name || artistsJoin?.name || '(Sin nombre)',
             artistEmail: '',    // loaded below
             status: sub.status as Status,
             createdAt: sub.created_at,
