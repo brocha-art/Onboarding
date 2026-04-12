@@ -97,8 +97,8 @@ export default function DashboardPage() {
         {/* Cards */}
         <div className="dashboard-cards">
 
-          {/* Perfil */}
-          <button className="dash-card" onClick={() => router.push('/portal?mode=perfil')}>
+          {/* Perfil — deshabilitado temporalmente */}
+          <div className="dash-card" style={{ opacity: 0.4, cursor: 'not-allowed', pointerEvents: 'none', position: 'relative' }}>
             <div className="dash-card-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="8" r="4"/>
@@ -106,8 +106,11 @@ export default function DashboardPage() {
               </svg>
             </div>
             <div className="dash-card-title">Perfil</div>
-            <div className="dash-card-desc">Configura tus secciones y tipo de contenido</div>
-          </button>
+            <div className="dash-card-desc">Próximamente disponible</div>
+            <span style={{ position: 'absolute', top: 14, right: 14, fontSize: 9, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)', padding: '3px 8px', borderRadius: 20 }}>
+              Pronto
+            </span>
+          </div>
 
           {/* Agregar contenido */}
           <button className="dash-card" onClick={() => router.push('/portal?mode=contenido')}>
