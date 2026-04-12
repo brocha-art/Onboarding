@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import type { PortalState } from '@/lib/types'
 
 interface Step4ReviewProps {
@@ -8,6 +9,96 @@ interface Step4ReviewProps {
   onEdit: (step: 1 | 2 | 3, screen?: 'tienda' | 'estudios') => void
   onSubmit: () => void
   submitting: boolean
+}
+
+function ImageGallery({ files, urls }: { files: File[]; urls: string[] }) {
+  const [lightbox, setLightbox] = useState<string | null>(null)
+
+  // Prefer local files (freshly selected), fall back to remote URLs
+  const srcs: string[] = files.length > 0
+    ? files.map(f => URL.createObjectURL(f))
+    : urls
+
+  if (srcs.length === 0) return null
+
+  return (
+    <>
+      {/* Hint */}
+      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 8, letterSpacing: 0.5 }}>
+        🔍 Haz clic en una imagen para ampliarla
+      </div>
+
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
+        {srcs.map((src, i) => (
+          <div
+            key={i}
+            onClick={() => setLightbox(src)}
+            style={{
+              width: 120, height: 120, borderRadius: 12,
+              border: '1.5px solid rgba(116,84,232,0.4)',
+              overflow: 'hidden', cursor: 'zoom-in', position: 'relative',
+              flexShrink: 0,
+            }}
+          >
+            <img
+              src={src}
+              alt={`Imagen ${i + 1}`}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+            {/* Hover overlay */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'rgba(0,0,0,0.35)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              opacity: 0, transition: 'opacity 0.2s',
+            }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '0')}
+            >
+              <span style={{ fontSize: 22 }}>🔍</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div
+          onClick={() => setLightbox(null)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 999,
+            background: 'rgba(0,0,0,0.88)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'zoom-out', padding: 20,
+            backdropFilter: 'blur(8px)',
+          }}
+        >
+          <img
+            src={lightbox}
+            alt="Vista ampliada"
+            style={{
+              maxWidth: '90vw', maxHeight: '88vh',
+              borderRadius: 16, objectFit: 'contain',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
+            }}
+          />
+          <button
+            onClick={() => setLightbox(null)}
+            style={{
+              position: 'fixed', top: 20, right: 24,
+              background: 'rgba(255,255,255,0.1)', border: 'none',
+              color: '#fff', fontSize: 22, cursor: 'pointer',
+              width: 40, height: 40, borderRadius: '50%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: 'Montserrat, sans-serif',
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+    </>
+  )
 }
 
 export default function Step4Review({ state, onBack, onEdit, onSubmit, submitting }: Step4ReviewProps) {
@@ -34,36 +125,12 @@ export default function Step4Review({ state, onBack, onEdit, onSubmit, submittin
                 borderBottom: i < state.products.length - 1 ? '0.5px solid var(--pb)' : 'none',
               }}
             >
-              {/* Product header */}
               <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--purple)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 12 }}>
                 Producto {i + 1} · {p.type}
               </div>
 
-              {/* Images */}
-              {(p.imageFiles.length > 0 || p.imageUrls.length > 0) && (
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
-                  {/* New files (not yet uploaded) */}
-                  {p.imageFiles.map((file, fi) => (
-                    <img
-                      key={`file-${fi}`}
-                      src={URL.createObjectURL(file)}
-                      alt={`Imagen ${fi + 1}`}
-                      style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 10, border: '0.5px solid var(--pb)' }}
-                    />
-                  ))}
-                  {/* Already-uploaded URLs */}
-                  {p.imageUrls.map((url, ui) => (
-                    <img
-                      key={`url-${ui}`}
-                      src={url}
-                      alt={`Imagen ${ui + 1}`}
-                      style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 10, border: '0.5px solid var(--pb)' }}
-                    />
-                  ))}
-                </div>
-              )}
+              <ImageGallery files={p.imageFiles} urls={p.imageUrls} />
 
-              {/* All fields */}
               <div className="review-row">
                 <span className="review-key">Título</span>
                 <span className="review-val">{p.title || '—'}</span>
@@ -117,27 +184,7 @@ export default function Step4Review({ state, onBack, onEdit, onSubmit, submittin
             <button className="review-edit" onClick={() => onEdit(3, 'estudios')}>Editar</button>
           </div>
 
-          {/* Cover image */}
-          {(state.studio.coverFiles.length > 0 || state.studio.coverUrls.length > 0) && (
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
-              {state.studio.coverFiles.map((file, fi) => (
-                <img
-                  key={`cover-${fi}`}
-                  src={URL.createObjectURL(file)}
-                  alt="Portada"
-                  style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 10, border: '0.5px solid var(--pb)' }}
-                />
-              ))}
-              {state.studio.coverUrls.map((url, ui) => (
-                <img
-                  key={`coverurl-${ui}`}
-                  src={url}
-                  alt="Portada"
-                  style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 10, border: '0.5px solid var(--pb)' }}
-                />
-              ))}
-            </div>
-          )}
+          <ImageGallery files={state.studio.coverFiles} urls={state.studio.coverUrls} />
 
           <div className="review-row">
             <span className="review-key">Nombre</span>
@@ -165,26 +212,18 @@ export default function Step4Review({ state, onBack, onEdit, onSubmit, submittin
           )}
           <div className="review-row">
             <span className="review-key">Módulos</span>
-            <span className="review-val">
-              {state.studio.modules.length} módulo{state.studio.modules.length !== 1 ? 's' : ''}
-            </span>
+            <span className="review-val">{state.studio.modules.length} módulo{state.studio.modules.length !== 1 ? 's' : ''}</span>
           </div>
           <div className="review-row">
             <span className="review-key">Sesiones</span>
-            <span className="review-val">
-              {totalSessions} sesión{totalSessions !== 1 ? 'es' : ''}
-            </span>
+            <span className="review-val">{totalSessions} sesión{totalSessions !== 1 ? 'es' : ''}</span>
           </div>
           {state.studio.resources.length > 0 && (
             <div className="review-row">
               <span className="review-key">Recursos</span>
-              <span className="review-val">
-                {state.studio.resources.length} recurso{state.studio.resources.length !== 1 ? 's' : ''}
-              </span>
+              <span className="review-val">{state.studio.resources.length} recurso{state.studio.resources.length !== 1 ? 's' : ''}</span>
             </div>
           )}
-
-          {/* Module detail */}
           {state.studio.modules.length > 0 && (
             <div style={{ marginTop: 14, paddingTop: 14, borderTop: '0.5px solid var(--pb)' }}>
               {state.studio.modules.map((m, mi) => (
