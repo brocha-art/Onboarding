@@ -1,14 +1,13 @@
 'use client'
 
 interface StepperProps {
-  current: number
+  current: number // 2=Sección, 3=Contenido, 4=Revisión (step 1 removed)
 }
 
 const STEPS = [
-  { n: 1, label: 'Perfil' },
-  { n: 2, label: 'Sección' },
-  { n: 3, label: 'Contenido' },
-  { n: 4, label: 'Revisión' },
+  { n: 2, label: 'Sección',   display: 1 },
+  { n: 3, label: 'Contenido', display: 2 },
+  { n: 4, label: 'Revisión',  display: 3 },
 ]
 
 export default function Stepper({ current }: StepperProps) {
@@ -20,7 +19,7 @@ export default function Stepper({ current }: StepperProps) {
           return (
             <div key={s.n} className={`ps ${status}`} data-step={s.n}>
               <div className="ps-num">
-                {current > s.n ? '✓' : s.n}
+                {current > s.n ? '✓' : s.display}
               </div>
               <div className="ps-label">{s.label}</div>
             </div>
