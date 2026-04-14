@@ -115,18 +115,30 @@ export async function submitPortal(
     return { success: false, error: artistError.message }
   }
 
-  // 2. Insert submission record (only if not already submitted)
+  // 2. Upsert submission record — get or create, always get the id
+  let submissionId: string | null = null
   const { data: existingSub } = await supabase
     .from('submissions')
     .select('id')
     .eq('artist_id', artistId)
+    .order('created_at', { ascending: false })
+    .limit(1)
     .maybeSingle()
 
-  if (!existingSub) {
-    await supabase.from('submissions').insert({
-      artist_id: artistId,
-      status: 'pending',
-    })
+  if (existingSub) {
+    submissionId = existingSub.id
+    // Reset to pending on resubmit
+    await supabase
+      .from('submissions')
+      .update({ status: 'pending', rejection_reason: null, reviewed_at: null })
+      .eq('id', submissionId)
+  } else {
+    const { data: newSub } = await supabase
+      .from('submissions')
+      .insert({ artist_id: artistId, status: 'pending' })
+      .select('id')
+      .single()
+    submissionId = newSub?.id ?? null
   }
 
   // 3. Upsert products — delete old ones first, then re-insert
@@ -135,6 +147,7 @@ export async function submitPortal(
 
     const productRows = state.products.map((p: Product, i: number) => ({
       artist_id: artistId,
+      submission_id: submissionId,
       name: p.title,
       description: p.description,
       type: p.type,
@@ -163,6 +176,7 @@ export async function submitPortal(
       .from('studios')
       .insert({
         artist_id: artistId,
+        submission_id: submissionId,
         name: s.title,
         description: s.description,
         level: s.level,
