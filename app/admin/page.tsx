@@ -147,6 +147,9 @@ export default function AdminPage() {
               .eq('artist_id', sub.artist_id),
           ])
 
+          if (productsResult.error) console.error('Products RLS error:', productsResult.error)
+          if (studiosResult.error)  console.error('Studios RLS error:',  studiosResult.error)
+
           const artistsJoin = Array.isArray(sub.artists) ? sub.artists[0] : sub.artists
           const artistName = artistResult.data?.name || artistsJoin?.name || '(Sin nombre)'
 
