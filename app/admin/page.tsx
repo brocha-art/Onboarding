@@ -113,8 +113,7 @@ export default function AdminPage() {
           status,
           created_at,
           rejection_reason,
-          artists (name),
-          auth_users:artist_id (email)
+          artists (name)
         `)
         .order('created_at', { ascending: false })
 
