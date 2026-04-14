@@ -137,14 +137,14 @@ export default function AdminPage() {
             supabase
               .from('products')
               .select('id, name, description, price, technique, year, dimensions, image_urls, shipping_option, type')
-              .eq('submission_id', sub.id),
+              .or(`submission_id.eq.${sub.id},and(submission_id.is.null,artist_id.eq.${sub.artist_id})`),
             supabase
               .from('studios')
               .select(`
                 id, name, description, level, price, cover_url,
                 modules ( id, title, order, sessions ( id, title, order ) )
               `)
-              .eq('submission_id', sub.id),
+              .or(`submission_id.eq.${sub.id},and(submission_id.is.null,artist_id.eq.${sub.artist_id})`),
           ])
 
           if (productsResult.error) console.error('Products RLS error:', productsResult.error)
